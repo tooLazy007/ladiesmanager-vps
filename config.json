@@ -1,0 +1,40 @@
+{
+  "_comment": "Ladies Manager VPS Configuration",
+  
+  "airtable": {
+    "token": "",
+    "baseId": "",
+    "_comment": "Get from: https://airtable.com/create/tokens"
+  },
+  
+  "server": {
+    "port": 3000,
+    "host": "0.0.0.0",
+    "_comment": "Server runs on port 3000, proxied by Nginx"
+  },
+  
+  "_instructions": {
+    "_comment": "HOW TO CONFIGURE:",
+    "step1": "Copy base ID from Airtable URL (between app.../ and /tbl...)",
+    "step2": "Create token at https://airtable.com/create/tokens",
+    "step3": "Add all scopes and select your base",
+    "step4": "Paste token and baseId above",
+    "step5": "All other settings (API keys, images) are in Airtable Configuration table"
+  },
+  
+  "_airtable_configuration": {
+    "_comment": "These fields should be in your Airtable Configuration table:",
+    "required_fields": [
+      "FAL_API_KEY - Your FAL.ai API key (get from https://fal.ai/)",
+      "Gemini_API_Key - Google Gemini API key (optional, for prompt generation)",
+      "Face_Reference - Face reference images (2 attachments)",
+      "Body_Reference - Body reference images (2 attachments)",
+      "Enable_NSFW - Enable/disable NSFW content",
+      "Image_Size - Output size (e.g., 2048x2048)",
+      "num_images - Number of images per prompt (1-6)",
+      "Enable_Video - Enable video generation",
+      "Video_Duration - Video duration in seconds (5 or 10)",
+      "Gemini_Prompt_Template - Template for Gemini analysis"
+    ]
+  }
+}

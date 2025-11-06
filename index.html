@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ladies Manager - Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .status-box {
+            background: #f7f9fc;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .status-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+            border-radius: 6px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .download-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: none;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .download-btn:active {
+            transform: translateY(0);
+        }
+
+        .download-btn.visible {
+            display: block;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(102, 126, 234, 0.3);
+            border-radius: 50%;
+            border-top-color: #667eea;
+            animation: spin 1s linear infinite;
+            vertical-align: middle;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .log-box {
+            background: #2d2d2d;
+            color: #00ff00;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .log-box.visible {
+            display: block;
+        }
+
+        .log-entry {
+            margin-bottom: 4px;
+        }
+
+        .error-box {
+            background: #fee;
+            border: 2px solid #fcc;
+            color: #c33;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .error-box.visible {
+            display: block;
+        }
+
+        .icon {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Ladies Manager</h1>
+        <p class="subtitle">AI Image & Video Generator</p>
+
+        <div class="status-box">
+            <div class="icon" id="statusIcon">🚀</div>
+            
+            <div class="status-label">Status</div>
+            <div class="status-value" id="statusText">Generation gestartet...</div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+            </div>
+
+            <div id="currentPrompt" style="text-align: center; color: #666; font-size: 14px; margin-bottom: 16px;"></div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-label">Verarbeitet</div>
+                    <div class="stat-value" id="processedCount">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Erfolgreich</div>
+                    <div class="stat-value" id="successCount" style="color: #4CAF50;">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Fehlgeschlagen</div>
+                    <div class="stat-value" id="failedCount" style="color: #f44336;">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Zeit</div>
+                    <div class="stat-value" id="elapsedTime">0s</div>
+                </div>
+            </div>
+        </div>
+
+        <button class="download-btn" id="downloadBtn" onclick="downloadZip()">
+            📦 Alle Bilder & Videos herunterladen
+        </button>
+
+        <div class="error-box" id="errorBox"></div>
+
+        <div class="log-box" id="logBox"></div>
+    </div>
+
+    <script>
+        let isGenerating = true;
+        let pollInterval;
+
+        // Start polling immediately
+        pollStatus();
+        pollInterval = setInterval(pollStatus, 2000); // Poll every 2 seconds
+
+        async function pollStatus() {
+            try {
+                const response = await fetch('/status');
+                const data = await response.json();
+
+                // Update UI
+                updateUI(data);
+
+                // Stop polling if generation is complete
+                if (!data.isRunning && data.progress.processed > 0) {
+                    clearInterval(pollInterval);
+                    isGenerating = false;
+                    showComplete(data);
+                }
+
+            } catch (error) {
+                console.error('Failed to fetch status:', error);
+            }
+        }
+
+        function updateUI(data) {
+            // Update status text
+            if (data.isRunning) {
+                document.getElementById('statusText').textContent = 'Generierung läuft...';
+                document.getElementById('statusIcon').textContent = '⚙️';
+            } else if (data.progress.processed > 0) {
+                document.getElementById('statusText').textContent = 'Fertig! ✅';
+                document.getElementById('statusIcon').textContent = '✅';
+            }
+
+            // Update progress bar
+            const percentage = data.progress.percentage || 0;
+            document.getElementById('progressBar').style.width = percentage + '%';
+
+            // Update stats
+            document.getElementById('processedCount').textContent = data.progress.processed + '/' + data.progress.total;
+            document.getElementById('successCount').textContent = data.progress.success;
+            document.getElementById('failedCount').textContent = data.progress.failed;
+            document.getElementById('elapsedTime').textContent = formatDuration(data.elapsed);
+
+            // Update current prompt
+            if (data.currentPrompt) {
+                document.getElementById('currentPrompt').textContent = 'Aktueller Prompt: ' + data.currentPrompt.substring(0, 60) + '...';
+            }
+
+            // Show download button if ready
+            if (data.downloadReady) {
+                document.getElementById('downloadBtn').classList.add('visible');
+            }
+
+            // Show error if exists
+            if (data.error) {
+                const errorBox = document.getElementById('errorBox');
+                errorBox.textContent = '❌ Fehler: ' + data.error;
+                errorBox.classList.add('visible');
+            }
+
+            // Update logs (last 5)
+            if (data.logs && data.logs.length > 0) {
+                const logBox = document.getElementById('logBox');
+                logBox.innerHTML = '';
+                data.logs.slice(-5).forEach(log => {
+                    const entry = document.createElement('div');
+                    entry.className = 'log-entry';
+                    entry.textContent = log.message;
+                    logBox.appendChild(entry);
+                });
+                logBox.classList.add('visible');
+                logBox.scrollTop = logBox.scrollHeight;
+            }
+        }
+
+        function showComplete(data) {
+            document.getElementById('statusText').textContent = `Fertig! ${data.progress.success} Bilder generiert ✅`;
+            document.getElementById('statusIcon').textContent = '🎉';
+            
+            // Show confetti effect (optional)
+            setTimeout(() => {
+                document.getElementById('statusIcon').textContent = '✅';
+            }, 2000);
+        }
+
+        function formatDuration(seconds) {
+            if (!seconds) return '0s';
+            
+            if (seconds < 60) {
+                return seconds + 's';
+            } else if (seconds < 3600) {
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return mins + 'm ' + secs + 's';
+            } else {
+                const hours = Math.floor(seconds / 3600);
+                const mins = Math.floor((seconds % 3600) / 60);
+                return hours + 'h ' + mins + 'm';
+            }
+        }
+
+        function downloadZip() {
+            const btn = document.getElementById('downloadBtn');
+            btn.textContent = '⏳ Download wird vorbereitet...';
+            btn.disabled = true;
+
+            window.location.href = '/download';
+
+            setTimeout(() => {
+                btn.textContent = '📦 Alle Bilder & Videos herunterladen';
+                btn.disabled = false;
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

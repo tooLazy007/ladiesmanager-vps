@@ -1,0 +1,29 @@
+{
+  "name": "ladiesmanager-vps",
+  "version": "1.0.0",
+  "description": "Ladies Manager - AI Image & Video Generator (VPS Version)",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "processor": "node batch-processor-vps.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "ai",
+    "image-generation",
+    "video-generation",
+    "fal-ai",
+    "seedream",
+    "airtable"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "archiver": "^6.0.1"
+  }
+}
